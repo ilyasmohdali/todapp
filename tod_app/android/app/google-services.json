@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1068040162186",
+    "firebase_url": "https://todapp4real.firebaseio.com",
+    "project_id": "todapp4real",
+    "storage_bucket": "todapp4real.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068040162186:android:362cff2960a7ffdc6e1673",
+        "android_client_info": {
+          "package_name": "com.ilyas.tod_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068040162186-hir95cgod6jeqqoi0plcvp99kcmaopkh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtKICjUgu4uKliP9LT-6SYiHdGM4C42SU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068040162186-hir95cgod6jeqqoi0plcvp99kcmaopkh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
