@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tod_app/Widgets/FormCard.dart';
 import 'package:tod_app/Services/authentication_services.dart';
 import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/screens/SignUpPage.dart';
@@ -23,6 +22,14 @@ class MyLoginState extends State<Login> {
   String email = '' , password = '' , error ='';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
+
+  bool _obscureText = true;
+
+  void _toggle(){
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,10 +92,9 @@ class MyLoginState extends State<Login> {
                                                     fontWeight: FontWeight.w700
                                                 )))),
                                     //Padding(padding: EdgeInsets.only(bottom: 0.0))
-                                  ],
+                                    ],
                                 )
-                            )
-                            //Image.asset("assets/images/tod_logo_new.png",
+                            ) //Image.asset("assets/images/tod_logo_new.png",
                           ],
                         ),
                         Container(
@@ -152,11 +158,12 @@ class MyLoginState extends State<Login> {
                                     onChanged: (value){
                                       setState(() => password = value);
                                     },
-                                    obscureText: true,
+                                    obscureText: _obscureText,
                                     //onSaved: (passwordInput) => password = passwordInput,
                                     decoration: InputDecoration(
                                         hintText: "Password",
-                                        hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)
+                                        hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0),
+                                        suffix: InkWell(onTap: _toggle, child: Text(_obscureText ? "Show" : "Hide"))
                                     ),
                                   ),
                                   /*SizedBox(

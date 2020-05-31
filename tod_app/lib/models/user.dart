@@ -6,9 +6,3 @@ class User{
   User({this.uid});
 
 }
-
-class UserEmail{
-  final String email;
-
-  UserEmail({this.email});
-}
