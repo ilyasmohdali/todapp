@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:tod_app/Services/authentication_services.dart';
-import 'package:tod_app/screens/home/home.dart';
-import 'package:tod_app/screens/SignUpPage.dart';
-import 'package:tod_app/screens/userProfile.dart';
+import 'package:tod_app/screens/home/StudentHome.dart';
+import 'package:tod_app/screens/Authentication/SignUpPage.dart';
+import 'package:tod_app/screens/Profile/studentProfile.dart';
 import 'package:tod_app/screens/Consultation.dart';
 import 'package:tod_app/models/user.dart';
 

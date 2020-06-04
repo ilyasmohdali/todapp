@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tod_app/Services/authentication_services.dart';
 import 'package:tod_app/Widgets/loading.dart';
-import 'package:tod_app/screens/SignUpPage.dart';
-import 'package:tod_app/screens/authenticationPage.dart';
+import 'package:tod_app/screens/Authentication/SignUpPage.dart';
+import 'package:tod_app/screens/Authentication/authenticationPage.dart';
 
 
 

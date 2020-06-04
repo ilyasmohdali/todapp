@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tod_app/models/NewUser.dart';
 import 'package:tod_app/notifier/usernotifier.dart';
 
@@ -9,7 +11,11 @@ class DatabaseService{
   //FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference userCollection = Firestore.instance.collection('users');
   final String uid;
-  DatabaseService({this.uid});
+  final String userName;
+  final File file;
+  final String email; final String gender; String userType; String phoneNum; String imageUrl;
+  final FirebaseStorage _storage = FirebaseStorage(storageBucket: 'gs://todapp4real.appspot.com');
+  DatabaseService({this.uid, this.userName,this.email, this.gender, this.userType, this.phoneNum, this.imageUrl, this.file});
 
   Future createUser(NewUser user) async {
     try{
@@ -18,24 +24,6 @@ class DatabaseService{
       return e.message;
     }
   }
-
-  /*Future getCurrentUser()  async {
-    return userCollection.where('uid' == uid).snapshots();
-  }*/
-
-
-  /*Future getCurrentUsers(UserNotifier userNotifier) async {
-    QuerySnapshot snapshot = await userCollection.getDocuments();
-    
-    List<NewUser> _userList = [];
-    
-    snapshot.documents.forEach((document){
-      NewUser newUser = NewUser.fromData(document.data);
-      _userList.add(newUser);
-    });
-
-    userNotifier.userList = _userList;
-  }*/
 
   NewUser _newUserDataFromSnapshot(DocumentSnapshot snapshot)
   {
@@ -54,18 +42,47 @@ class DatabaseService{
     return userCollection.document(uid).snapshots().map(_newUserDataFromSnapshot);
   }
 
-
-  /*Future updateStudentData(String userName, String gender, String age) async {
+  Future updateStudentData(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl) async {
 
     return await userCollection.document(uid).setData({
+      'uid' : uid,
       'userName' : userName,
+      'email' : email,
       'gender' : gender,
-      'age' : age
+      'userType' : userType,
+      'phoneNum' : phoneNum,
+      'imageURL' : imageUrl,
+    });
+  }
+
+
+
+  uploadImage(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl) async {
+    String filePath = 'profiles/${DateTime.now()}.jpg' ;
+    StorageUploadTask task = _storage.ref().child(filePath).putFile(file);
+
+    var downUrl = await (await task.onComplete).ref.getDownloadURL();
+    var imageUrl = downUrl.toString();
+    updateImageURL(uid, userName, email, gender, userType, phoneNum, imageUrl);
+    print('Download URL :  $imageUrl');
+
+    return imageUrl;
+  }
+
+  Future updateImageURL(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl) async {
+    return await userCollection.document(uid).setData({
+      'uid' : uid,
+      'userName' : userName,
+      'email' : email,
+      'gender' : gender,
+      'userType' : userType,
+      'phoneNum' : phoneNum,
+      'imageURL' : imageUrl.toString(),
     });
   }
 
   //student list from snapshot
-  List<NewUser> _studentListFromSnapshot(QuerySnapshot snapshot){
+  /*List<NewUser> _studentListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
       return NewUser(
         userName: doc.data['userName'] ?? '',

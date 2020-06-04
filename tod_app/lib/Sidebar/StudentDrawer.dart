@@ -10,7 +10,7 @@ import 'package:tod_app/Services/authentication_services.dart';
 import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/models/NewUser.dart';
 import 'package:tod_app/notifier/usernotifier.dart';
-import 'package:tod_app/screens/userProfile.dart';
+import 'package:tod_app/screens/Profile/studentProfile.dart';
 import 'package:tod_app/screens/Consultation.dart';
 import 'package:tod_app/models/user.dart';
 import 'package:tod_app/Services/database.dart';
@@ -34,9 +34,9 @@ class _StudentDrawerState extends State<StudentDrawer>{
   String error;
 
   Future getImage() async {
-    var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _image = tempImage;
+      _image = image;
     });
   }
 

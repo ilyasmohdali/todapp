@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tod_app/screens/login_screen.dart';
-import 'package:tod_app/screens/SignUpPage.dart';
+import 'package:tod_app/screens/Authentication/login_screen.dart';
+import 'package:tod_app/screens/Authentication/SignUpPage.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationPage extends StatefulWidget{

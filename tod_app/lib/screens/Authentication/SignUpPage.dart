@@ -4,7 +4,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/Services/authentication_services.dart';
-import 'package:tod_app/screens/login_screen.dart';
+import 'package:tod_app/screens/Authentication/login_screen.dart';
 
 
 class SignUpPage extends StatefulWidget{
@@ -156,6 +156,7 @@ class _SignUpPageState extends State<SignUpPage>{
                               hintText: "Username",
                               hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)
                           ),
+                          maxLength: 15,
                         ),
                         SizedBox(height: 5.0,),
                         Text("Email", style: TextStyle(

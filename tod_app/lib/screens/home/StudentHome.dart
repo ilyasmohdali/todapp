@@ -8,15 +8,15 @@ import 'package:provider/provider.dart';
 import 'package:tod_app/models/NewUser.dart';
 
 
-class Home extends StatefulWidget{
+class StudentHome extends StatefulWidget{
   final String uid;
-  Home({this.uid});
+  StudentHome({this.uid});
   @override
-  _HomeState createState() => _HomeState();
+  _StudentHomeState createState() => _StudentHomeState();
 }
 
 
-class _HomeState extends State<Home> {
+class _StudentHomeState extends State<StudentHome> {
 
   FirebaseUser user;
 /*
