@@ -14,7 +14,7 @@ description: A new Flutter application for FYP
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -35,13 +35,20 @@ dependencies:
   flutter_spinkit : "^4.1.2"
   json_annotation : ^3.0.0
   google_maps_flutter : ^0.5.11
+  location : 3.0.2
   shared_preferences : ^0.5.7+2
   intl : 0.16.1
   image_picker : 0.6.6+4
   date_range_picker : ^1.0.3
-  flutter_datetime_picker : 1.2.5
   firebase_storage : 3.1.6
   firebase_core : 0.4.5
+  geopoint : 0.7.1
+  geolocator : 5.3.2+2
+  google_directions_api : 0.5.0
+  geoflutterfire : 2.1.0
+  geocoder : 0.2.1
+  great_circle_distance : 1.0.1
+  rxdart: ^0.23.1
 
 dev_dependencies:
   json_serializable : ^3.2.0

@@ -61,6 +61,12 @@ class AuthenticationService {
         gender: gender,
         userType: userType,
         imageURL: imageURL,
+        userPreference1: "",
+        userPreference2: "",
+        userPreference3: "",
+        tutorTeach1: "",
+        tutorTeach2: "",
+        tutorTeach3: ""
       );
 
       await DatabaseService().createUser(_newUser);

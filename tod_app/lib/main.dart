@@ -7,13 +7,8 @@ import 'package:tod_app/models/user.dart';
 import 'package:tod_app/notifier/usernotifier.dart';
 
 
-void main() => runApp(
-  MultiProvider(providers: [
-    ChangeNotifierProvider(
-      builder:(context)=> UserNotifier(),
-  ),],
-    child:TODapp(),
-));
+void main() => runApp(TODapp()
+);
 
 class TODapp extends StatefulWidget{
   @override

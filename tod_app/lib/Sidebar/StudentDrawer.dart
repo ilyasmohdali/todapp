@@ -11,7 +11,7 @@ import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/models/NewUser.dart';
 import 'package:tod_app/notifier/usernotifier.dart';
 import 'package:tod_app/screens/Profile/studentProfile.dart';
-import 'package:tod_app/screens/Consultation.dart';
+import 'package:tod_app/Preferences/Consultation.dart';
 import 'package:tod_app/models/user.dart';
 import 'package:tod_app/Services/database.dart';
 
@@ -132,7 +132,7 @@ class _StudentDrawerState extends State<StudentDrawer>{
                               leading: Icon(Icons.person),
                               title: Text("Profile", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => StudentProfile()));
                               }
                           ),
                         ),

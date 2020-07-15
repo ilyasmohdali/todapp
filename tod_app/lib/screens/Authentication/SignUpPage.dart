@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/Services/authentication_services.dart';
@@ -231,7 +230,7 @@ class _SignUpPageState extends State<SignUpPage>{
                         DropdownButtonFormField(
                           isExpanded: true,
                           hint: Text('Signing Up As', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
-                          validator: (value) => value==null ? 'What would you like to sign up as?' : null,
+                          validator: (value) => value == null ? 'What would you like to sign up as?' : null,
                           value: _selectedType,
                           onChanged: (newValue) {
                             setState(() {

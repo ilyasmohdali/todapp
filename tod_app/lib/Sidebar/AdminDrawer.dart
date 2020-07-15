@@ -6,38 +6,27 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tod_app/Preferences/Teaching.dart';
 import 'package:tod_app/Services/authentication_services.dart';
 import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/models/NewUser.dart';
 import 'package:tod_app/notifier/usernotifier.dart';
-import 'package:tod_app/screens/Profile/tutorProfile.dart';
+import 'package:tod_app/screens/Profile/adminProfile.dart';
 import 'package:tod_app/Preferences/Consultation.dart';
 import 'package:tod_app/models/user.dart';
 import 'package:tod_app/Services/database.dart';
 
-class TutorDrawer extends StatefulWidget{
+class AdminDrawer extends StatefulWidget{
 
-  final String uid;
-  TutorDrawer({this.uid});
 
   @override
-  _TutorDrawerState createState() => new _TutorDrawerState();
+  _AdminDrawerState createState() => new _AdminDrawerState();
 }
 
-class _TutorDrawerState extends State<TutorDrawer>{
+class _AdminDrawerState extends State<AdminDrawer>{
 
   FirebaseUser user;
   String error;
 
-  File _image;
-
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
-  }
 
 
 
@@ -63,7 +52,7 @@ class _TutorDrawerState extends State<TutorDrawer>{
                 Container(
                   width: double.infinity,
                   height: 240.0,
-                  color: Colors.red,
+                  color: Colors.black,
                 ),
                 Center(
                     child: Column(
@@ -94,6 +83,7 @@ class _TutorDrawerState extends State<TutorDrawer>{
                           )
                         ])
                 ),
+
               ]
           ),
           Container(
@@ -105,29 +95,29 @@ class _TutorDrawerState extends State<TutorDrawer>{
                       leading: Icon(Icons.person),
                       title: Text("Profile", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => TutorProfile()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AdminProfile()));
                       }
                   ),
                 ),
               )
           ),
-          Container(
+          /*Container(
               width: double.infinity,
               child: InkWell(
                 child: Material(
                   color: Colors.transparent,
                   child:ListTile(
-                      leading: Icon(Icons.perm_contact_calendar),
-                      title: Text("My Teaching", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
+                      leading: Icon(Icons.phone_in_talk),
+                      title: Text("Consultations", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Teaching()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Consultation()));
                       }
                   ),
                 ),
               )
-          ),
+          ),*/
           SizedBox(
-            height: 270.0,
+            height: 320.0,
           ),
           Container(
               width: double.infinity,
@@ -146,9 +136,9 @@ class _TutorDrawerState extends State<TutorDrawer>{
           )],
       ),
     );
-    }else{
-      return Loading();
-    }
+  }else{
+  return Loading();
+  }
 });
   }
 }

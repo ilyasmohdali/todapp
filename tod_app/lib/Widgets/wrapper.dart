@@ -19,23 +19,6 @@ class Wrapper extends StatefulWidget{
 
 class _WrapperState extends State<Wrapper> {
 
-  /*FirebaseUser user;
-  String error;
-
-  void setUser(FirebaseUser user) {
-    setState(() {
-      this.user = user;
-      this.error = null;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.currentUser().then(setUser);
-  }*/
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -50,7 +33,7 @@ class _WrapperState extends State<Wrapper> {
       stream: DatabaseService(uid: user.uid).userData,
       builder: (context,snapshot){
         if(!snapshot.hasData){
-          return StudentHome();
+          return Loading();
         }
         else{
           NewUser userData = snapshot.data;

@@ -7,18 +7,18 @@ import 'package:tod_app/Widgets/loading.dart';
 import 'package:tod_app/Widgets/wrapper.dart';
 import 'package:tod_app/models/NewUser.dart';
 import 'package:tod_app/models/user.dart';
-import 'package:tod_app/screens/home/studentProfileUpdate.dart';
+import 'package:tod_app/screens/Profile/studentProfileUpdate.dart';
 import 'package:tod_app/screens/home/student_list.dart';
 
 
-class UserProfile extends StatefulWidget{
+class StudentProfile extends StatefulWidget{
   final String uid;
-  UserProfile({this.uid});
+  StudentProfile({this.uid});
 
-  _UserProfileState createState() => new _UserProfileState();
+  _StudentProfileState createState() => new _StudentProfileState();
 }
 
-class _UserProfileState extends State<UserProfile>{
+class _StudentProfileState extends State<StudentProfile>{
 
   FirebaseUser user;
 
@@ -100,7 +100,7 @@ class _UserProfileState extends State<UserProfile>{
                     ),
                     ]
                 ),
-                Container(
+                /*Container(
                   padding: EdgeInsets.only(top: 15.0, left: 25.0),
                   alignment: Alignment.centerLeft,
                   child: Text("Location", style: TextStyle(fontSize: 22.0, fontFamily: "Poppins"),)),
@@ -230,7 +230,7 @@ class _UserProfileState extends State<UserProfile>{
                           ]
                       )
                   ),
-                  Divider(color: Colors.black)
+                  Divider(color: Colors.black)*/
                 ]),
               ) );
           }
