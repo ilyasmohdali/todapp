@@ -10,9 +10,13 @@ import 'package:tod_app/screens/Authentication/authenticationPage.dart';
 import 'package:tod_app/screens/home/StudentHome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tod_app/screens/notVerified.dart';
 import 'loading.dart';
 
 class Wrapper extends StatefulWidget{
+  final String uid;
+
+  Wrapper({this.uid});
   @override
   _WrapperState createState() => _WrapperState();
 }
@@ -38,10 +42,13 @@ class _WrapperState extends State<Wrapper> {
         else{
           NewUser userData = snapshot.data;
           if(userData.userType == 'Student'){
-            return StudentHome();
+            return StudentHome(uid: widget.uid,);
           }
-          else if(userData.userType == 'Tutor'){
+          else if(userData.userType == 'Tutor' && userData.verified =='Yes'){
             return TutorHome();
+          }
+          else if(userData.userType == 'Tutor' && userData.verified == 'No'){
+            return TutorHomeNotVerified();
           }
             return AdminHome();
         }

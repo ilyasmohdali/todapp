@@ -14,6 +14,7 @@ import 'package:tod_app/screens/Profile/studentProfile.dart';
 import 'package:tod_app/Preferences/Consultation.dart';
 import 'package:tod_app/models/user.dart';
 import 'package:tod_app/Services/database.dart';
+import 'package:tod_app/screens/displayTutor.dart';
 
 class StudentDrawer extends StatefulWidget{
 
@@ -144,8 +145,8 @@ class _StudentDrawerState extends State<StudentDrawer>{
                         child: Material(
                           color: Colors.transparent,
                           child:ListTile(
-                              leading: Icon(Icons.phone_in_talk),
-                              title: Text("Consultations", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
+                              leading: Icon(Icons.school),
+                              title: Text("Learning Method", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
                               onTap: (){
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => Consultation()));
                               }
@@ -153,8 +154,23 @@ class _StudentDrawerState extends State<StudentDrawer>{
                         ),
                       )
                   ),
+                  Container(
+                      width: double.infinity,
+                      child: InkWell(
+                        child: Material(
+                          color: Colors.transparent,
+                          child:ListTile(
+                              leading: Icon(Icons.list),
+                              title: Text("Suggestions", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => DisplayTutor(uid: userData.id, userP1: userData.userPreference1, userP2: userData.userPreference2, userP3: userData.userPreference3,)));
+                              }
+                          ),
+                        ),
+                      )
+                  ),
                   SizedBox(
-                    height: 270.0,
+                    height: 210.0,
                   ),
                   Container(
                       width: double.infinity,

@@ -66,7 +66,8 @@ class AuthenticationService {
         userPreference3: "",
         tutorTeach1: "",
         tutorTeach2: "",
-        tutorTeach3: ""
+        tutorTeach3: "",
+        verified: "No"
       );
 
       await DatabaseService().createUser(_newUser);

@@ -30,8 +30,8 @@ class _TutorProfileState extends State<TutorProfile>{
 
   String uid, docID;
 
-  getAddress(String uid, String docID){
-    Firestore.instance.collection('locations').where('id' ,isEqualTo: widget.uid).getDocuments().then((docs){
+  getAddress(){
+    Firestore.instance.collection('locations').getDocuments().then((docs){
       if(docs.documents.isNotEmpty){
         String resultAddress = '';
         int i;
@@ -50,7 +50,7 @@ class _TutorProfileState extends State<TutorProfile>{
 
   @override
   void initState() {
-    getAddress(uid,docID);
+    getAddress();
     super.initState();
   }
 
@@ -81,15 +81,29 @@ class _TutorProfileState extends State<TutorProfile>{
                 body: SingleChildScrollView(
                   child: Column(
                       children: <Widget>[
+                        //Visibility(visible: document,),
                         Stack(
                             children: <Widget>[
                               Container(
                                 width: double.infinity,
                                 height: 230.0,
                                 color: Colors.red,
-                                /*child: StreamBuilder<UserLocation>(
-                                  stream: Firestore.instance.collection('locations').where('docID', isEqualTo: docID).getDocuments(),
+                                /*child: FutureBuilder(
+                                  //stream: DatabaseService(uid: user.uid).locationData,
+                                  future: Firestore.instance.collection('locations').where('id', isEqualTo: widget.docID).getDocuments(),
                                   builder: (context,snapshot){
+                                    if(snapshot.hasData){
+                                      //String resultAddress = '';
+                                      /*int i;
+                                      for( i=0; i<snapshot.data.length; i++) {
+                                        resultAddress = docs.documents[i].data['resultAddress'];
+                                      }*/
+                                      return Text(snapshot.data['resultAddress']);
+                                    }
+                                    else{return Container(height:20.0,color: Colors.black);}
+                                  },
+
+                                  /*builder: (context,snapshot){
                                     if(snapshot.hasData) {
                                       UserLocation locationData = snapshot.data;
                                       return Text(locationData.address);
@@ -97,7 +111,7 @@ class _TutorProfileState extends State<TutorProfile>{
                                     else{
                                       return Container(width: 20.0,height: 20.0);
                                     }
-                                  },
+                                  },*/
                                 ),*/
                               ),
                               Container(
@@ -179,6 +193,7 @@ class _TutorProfileState extends State<TutorProfile>{
                                         ),
                                       ))])),
                         Divider(color: Colors.black),
+                        //getAddress()
                         /*Container(
                             padding: EdgeInsets.only(top: 15.0, left: 25.0),
                             alignment: Alignment.centerLeft,

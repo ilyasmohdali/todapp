@@ -45,6 +45,7 @@ class _TeachingState extends State<Teaching> {
   String tutorTeach1;
   String tutorTeach2;
   String tutorTeach3;
+  String verified;
   String error = '';
   String _selectedType;
   String _selectedGender;
@@ -125,6 +126,7 @@ class _TeachingState extends State<Teaching> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified
                             );
                           }
                           else if(_formKey.currentState.validate()){
@@ -143,6 +145,7 @@ class _TeachingState extends State<Teaching> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified
                             );
                           }
                           Navigator.of(context).pop();
@@ -243,8 +246,8 @@ class _TeachingState extends State<Teaching> {
                                               color: Colors.black))),
                                   DropdownButtonFormField(
                                     isExpanded: true,
-                                    hint: Text('Preference 2', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
-                                    validator: (value) => value==null ? 'Preference 2' : null,
+                                    hint: Text('Method 2', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
+                                    validator: (value) => value==null ? 'Method 2' : null,
                                     value: _selectedTeach2,
                                     onChanged: (newValue) {
                                       setState(() {
@@ -277,8 +280,8 @@ class _TeachingState extends State<Teaching> {
                                               color: Colors.black))),
                                   DropdownButtonFormField(
                                     isExpanded: true,
-                                    hint: Text('Preference 3', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
-                                    validator: (value) => value==null ? 'Preference 3' : null,
+                                    hint: Text('Method 3', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
+                                    validator: (value) => value==null ? 'Method 3' : null,
                                     value: _selectedTeach3,
                                     onChanged: (newValue) {
                                       setState(() {

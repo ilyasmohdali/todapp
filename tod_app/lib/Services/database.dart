@@ -17,12 +17,12 @@ class DatabaseService{
   final String uid;
   final String userName;
   final File file;
-  final String tutorTeach1; String tutorTeach2; String tutorTeach3;
+  final String tutorTeach1; String tutorTeach2; String tutorTeach3; String verified;
   final String email; final String gender; String userType; String phoneNum; String imageUrl; String userPreference1; String userPreference2; String userPreference3;
   final FirebaseStorage _storage = FirebaseStorage(storageBucket: 'gs://todapp4real.appspot.com');
   Geoflutterfire geo = Geoflutterfire();
   DatabaseService({this.uid, this.userName,this.email, this.gender, this.userType, this.phoneNum, this.imageUrl,
-    this.file, this.userPreference1, this.userPreference2, this.userPreference3, this.tutorTeach1, this.tutorTeach2, this.tutorTeach3});
+    this.file, this.userPreference1, this.userPreference2, this.userPreference3, this.tutorTeach1, this.tutorTeach2, this.tutorTeach3, this.verified});
 
   Future createUser(NewUser user) async {
     try{
@@ -48,6 +48,7 @@ class DatabaseService{
       tutorTeach1: snapshot.data['tutorTeach1'],
       tutorTeach2: snapshot.data['tutorTeach2'],
       tutorTeach3: snapshot.data['tutorTeach3'],
+      verified: snapshot.data['verified']
     );
   }
 
@@ -69,7 +70,7 @@ class DatabaseService{
     return locationCollection.document(uid).snapshots().map(_newLocationDataFromSnapshot);
   }
 
-  Future updateStudentData(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3, String tutorTeach1, String tutorTeach2, String tutorTeach3) async {
+  Future updateStudentData(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3, String tutorTeach1, String tutorTeach2, String tutorTeach3, String verified) async {
     return await userCollection.document(uid).setData({
       'uid' : uid,
       'userName' : userName,
@@ -84,22 +85,23 @@ class DatabaseService{
       'tutorTeach1' : tutorTeach1,
       'tutorTeach2' : tutorTeach2,
       'tutorTeach3' : tutorTeach3,
+      'verified' : verified
     });
   }
 
-  uploadImage(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3, String tutorTeach1, String tutorTeach2, String tutorTeach3) async {
+  uploadImage(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3, String tutorTeach1, String tutorTeach2, String tutorTeach3, String verified) async {
     String filePath = 'profiles/${DateTime.now()}.jpg' ;
     StorageUploadTask task = _storage.ref().child(filePath).putFile(file);
 
     var downUrl = await (await task.onComplete).ref.getDownloadURL();
     var imageUrl = downUrl.toString();
-    updateImageURL(uid, userName, email, gender, userType, phoneNum, imageUrl, userPreference1, userPreference2, userPreference3,tutorTeach1,tutorTeach2,tutorTeach3);
+    updateImageURL(uid, userName, email, gender, userType, phoneNum, imageUrl, userPreference1, userPreference2, userPreference3,tutorTeach1,tutorTeach2,tutorTeach3, verified);
     print('Download URL :  $imageUrl');
 
     return imageUrl;
   }
 
-  Future updateImageURL(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3,String tutorTeach1, String tutorTeach2, String tutorTeach3) async {
+  Future updateImageURL(String uid, String userName, String email, String gender, String userType, String phoneNum, String imageUrl, String userPreference1, String userPreference2, String userPreference3,String tutorTeach1, String tutorTeach2, String tutorTeach3, String verified) async {
     return await userCollection.document(uid).setData({
       'uid' : uid,
       'userName' : userName,
@@ -114,6 +116,7 @@ class DatabaseService{
       'tutorTeach1' : tutorTeach1,
       'tutorTeach2' : tutorTeach2,
       'tutorTeach3' : tutorTeach3,
+      'verified' : verified,
     });
   }
 

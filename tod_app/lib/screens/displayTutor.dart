@@ -39,33 +39,41 @@ class DisplayTutor extends StatefulWidget{
     @override
 
     Widget build(BuildContext context) {
-    //final user = Provider.of<User>(context);
+    final user = Provider.of<User>(context);
+
     if(widget.userP1 == 'Video' && widget.userP2 == 'default' && widget.userP3 == 'default') {
+      return StreamBuilder<NewUser>(
+          stream: DatabaseService(uid: user.uid).userData,
+          builder: (context,snapshot){
+            if(snapshot.hasData) {
+              NewUser userData = snapshot.data;
     return loading ? Loading() : Scaffold(
     //extendBodyBehindAppBar: false,
-    backgroundColor: Color(0xFFbee8f9),
-    appBar: AppBar(
-    title: Text("Suggested Tutor"),
-    backgroundColor: Color(0x44000000),
-    iconTheme: IconThemeData(
-    color: Colors.black,
+      backgroundColor: Color(0xFFbee8f9),
+      appBar: AppBar(
+        title: Text("Suggested Tutor"),
+        backgroundColor: Color(0x44000000),
+        iconTheme: IconThemeData(
+        color: Colors.black,
+      ),
+      elevation: 0.0,
     ),
-    elevation: 0.0,
+      //drawer: StudentConsultationDrawer(),
+      body: ListView(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(left: 20.0, top: 12.0, bottom: 10.0),
+          child: Text("List of Tutors",
+          style: TextStyle(fontSize: 20.0, fontFamily: "Poppins"))
     ),
-    drawer: StudentConsultationDrawer(uid: user.uid),
-    body: ListView(
-    children: <Widget>[
-    Container(
-    padding: EdgeInsets.only(left: 20.0, top: 12.0, bottom: 10.0),
-    child: Text("List of Tutors",
-    style: TextStyle(fontSize: 20.0, fontFamily: "Poppins"))
-    ),
-    Container(
-    child: showAllTutorVDD()
-    )
+      Container(
+      child: showAllTutorVDD()
+      )
     ],
     ));
+
     }
+          else{return Wrapper();}});}
     else if(widget.userP1 == 'default' && widget.userP2 == 'Audio' && widget.userP3 == 'default'){
     {
     return loading ? Loading() : Scaffold(
@@ -79,7 +87,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -107,7 +115,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -136,7 +144,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -165,7 +173,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -194,7 +202,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -223,7 +231,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -252,7 +260,7 @@ class DisplayTutor extends StatefulWidget{
     ),
     elevation: 0.0,
     ),
-    drawer: StudentConsultationDrawer(),
+    //drawer: StudentConsultationDrawer(),
     body: ListView(
     children: <Widget>[
     Container(
@@ -410,7 +418,8 @@ class DisplayTutor extends StatefulWidget{
     showAllTutorDDK(){
     final user = Provider.of<User>(context);
     return StreamBuilder(
-        stream: Firestore.instance.collection('users').where('tutorTeach3', isEqualTo: 'Kinesthetic').snapshots(),
+        stream: Firestore.instance.collection('users').orderBy('userName', descending: false)
+            .where('tutorTeach3', isEqualTo: 'Kinesthetic').snapshots(),
         builder: (context,
             AsyncSnapshot <QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {

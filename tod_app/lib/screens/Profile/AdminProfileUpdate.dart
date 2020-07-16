@@ -45,6 +45,7 @@ class _AdminUpdateProfileState extends State<AdminUpdateProfile> {
   String tutorTeach1;
   String tutorTeach2;
   String tutorTeach3;
+  String verified;
   String error = '';
   String _selectedType;
   String _selectedGender;
@@ -119,6 +120,7 @@ class _AdminUpdateProfileState extends State<AdminUpdateProfile> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified
                             );
                           }
                           else if(_formKey.currentState.validate()){
@@ -137,6 +139,7 @@ class _AdminUpdateProfileState extends State<AdminUpdateProfile> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified
                             );
                           }
                           Navigator.of(context).pop();

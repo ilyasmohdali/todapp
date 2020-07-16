@@ -118,7 +118,7 @@ class _TutorDrawerState extends State<TutorDrawer>{
                   color: Colors.transparent,
                   child:ListTile(
                       leading: Icon(Icons.perm_contact_calendar),
-                      title: Text("My Teaching", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
+                      title: Text("Teaching Method", style: TextStyle(fontFamily: "Poppins-Bold", fontSize: 18.0),),
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Teaching()));
                       }

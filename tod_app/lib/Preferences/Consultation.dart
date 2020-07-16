@@ -48,6 +48,7 @@ class _ConsultationState extends State<Consultation> {
   String tutorTeach1;
   String tutorTeach2;
   String tutorTeach3;
+  String verified;
   String error = '';
   String _selectedType;
   String _selectedGender;
@@ -128,6 +129,7 @@ class _ConsultationState extends State<Consultation> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified
                             );
                           }
                           else if(_formKey.currentState.validate()){
@@ -146,9 +148,11 @@ class _ConsultationState extends State<Consultation> {
                               tutorTeach1 ?? userData.tutorTeach1,
                               tutorTeach2 ?? userData.tutorTeach2,
                               tutorTeach3 ?? userData.tutorTeach3,
+                              verified ?? userData.verified,
                             );
                           }
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplayTutor(uid: user.uid, userP1: userPreference1, userP2: userPreference2, userP3: userPreference3,)));
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => DisplayTutor(userP1: userPreference1, userP2: userPreference2, userP3: userPreference3,)));
+                          Navigator.pop(context);
                         },
                       )
                     ],

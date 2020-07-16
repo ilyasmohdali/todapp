@@ -15,9 +15,10 @@ class NewUser{
   final String tutorTeach1;
   final String tutorTeach2;
   final String tutorTeach3;
+  final String verified;
 
   NewUser({this.id, this.userName, this.email, this.gender, this.userType, this.phoneNum, this.imageURL,
-    this.userPreference1,this.userPreference2,this.userPreference3, this.tutorTeach1, this.tutorTeach2,this.tutorTeach3});
+    this.userPreference1,this.userPreference2,this.userPreference3, this.tutorTeach1, this.tutorTeach2,this.tutorTeach3, this.verified});
 
   NewUser.fromData(Map<String, dynamic> data)
       : id = data['id'],
@@ -32,7 +33,8 @@ class NewUser{
     userPreference3 = data['userPreference1'],
     tutorTeach1 = data['tutorTeach1'],
     tutorTeach2 = data['tutorTeach2'],
-    tutorTeach3 = data['tutorTeach3'];
+    tutorTeach3 = data['tutorTeach3'],
+    verified = data['verified'];
 
   //List<DocumentSnapshot> get documents => documents;
 
@@ -53,6 +55,7 @@ class NewUser{
      'tutorTeach1' : tutorTeach1,
      'tutorTeach2' : tutorTeach2,
      'tutorTeach3' : tutorTeach3,
+     'verified' : verified
    };
   }
 }

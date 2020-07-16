@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:async';
-
+//import 'dart:js';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +53,8 @@ class _AdminHomeState extends State<AdminHome>{
               ),
               Container(
                 child: StreamBuilder(
-                  stream: Firestore.instance.collection('users').orderBy('userName', descending: false).snapshots(),
-                  builder: (context, AsyncSnapshot <QuerySnapshot> snapshot) {
+                  stream: Firestore.instance.collection('users').where('userType', isEqualTo: 'Tutor').snapshots(),
+                  builder: (context,snapshot) {
                     if (!snapshot.hasData) {
                       return Wrapper();
                     }
@@ -81,9 +81,15 @@ class _AdminHomeState extends State<AdminHome>{
                                   //Text(document[index].data['gender']),
                                 ]),
                               ),
-                              subtitle: Text(document[index].data['userType']),
+                              subtitle: Row(children: <Widget>[
+                                Text(document[index].data['userType']),
+                                Text(" "),
+                                Text("Verified: "),
+                                Text(document[index].data['verified']),
+                              ],
+                              ),
                               trailing: Text(document[index].data['phoneNum']),
-                              onTap: (){},
+                              onTap: (){changeVerify(document[index].data['uid']);},
                             ),
                           );
                         }
@@ -92,4 +98,129 @@ class _AdminHomeState extends State<AdminHome>{
         )],
       ));
     }
+
+  void changeVerify(String uid){
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(10.0),
+                topRight: const Radius.circular(10.0)
+            )
+        ),
+        context: context,
+        builder: (builder){
+          return StreamBuilder(
+              stream: Firestore.instance.collection('users').document(uid).snapshots(),
+              builder: (context, snapshot){
+                if(!snapshot.hasData){
+                  return Loading();
+                }
+                return new Container(
+                  height: 250.0,
+                  child: new Container(
+                    padding: EdgeInsets.fromLTRB(20.0, 3, 30.0, 5.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  margin: EdgeInsets.only(top: 35.0, bottom: 7.0, left: 10.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(image: NetworkImage(snapshot.data['imageURL']),
+                                    fit: BoxFit.fill),
+                                  ),
+                                )
+                              ],),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    width: 220,
+                                margin: EdgeInsets.only(top:26, left: 14),
+                                child: Text(snapshot.data['userName'], textAlign: TextAlign.left,style: TextStyle( fontSize: 24, fontFamily: 'Poppins')),
+                              ),
+                                Container(
+                                  width: 220,
+                                  margin: EdgeInsets.only(top:4, left: 15),
+                                  child: Text(snapshot.data['email'], style: TextStyle( fontSize: 16)),
+                                ),
+                                Container(
+                                  width: 220,
+                                  margin: EdgeInsets.only(top:3, left: 15),
+                                  child: Text(snapshot.data['phoneNum'], style: TextStyle( fontSize: 16)),
+                                )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 20.0,),
+                        Visibility(
+                          visible: (snapshot.data['verified'].toString() == 'No')? true : false,
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 55.0,
+                                width: 300.0,
+                                child: RaisedButton(
+                                  elevation: 0.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(2.0)
+                                  ),
+                                  color: Colors.blue,
+                                  child: Text("Verify User", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0, color: Colors.white),),
+                                  onPressed: () async {
+                                    Firestore.instance.collection('users').document(uid).updateData({
+                                      'verified': 'Yes'
+                                    }).whenComplete((){
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                              )
+                              )],
+                          ),
+                        ),
+                        Visibility(
+                          visible: (snapshot.data['verified'].toString() == 'Yes')? true : false,
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                  height: 55.0,
+                                  width: 300.0,
+                                  child: RaisedButton(
+                                    elevation: 0.0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(2.0)
+                                    ),
+                                    color: Colors.blue,
+                                    child: Text("Unverify User", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0, color: Colors.white),),
+                                    onPressed: () async {
+                                      Firestore.instance.collection('users').document(uid).updateData({
+                                        'verified': 'No'
+                                      }).whenComplete((){
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                  )
+                              )],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }
+          );
+        }
+    );
+  }
 }
+
