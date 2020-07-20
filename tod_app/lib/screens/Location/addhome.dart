@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tod_app/Map/map.dart';
 import 'package:tod_app/Map/map3.dart';
 import 'package:tod_app/Sidebar/TutorDrawer.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/geocoder.dart' as Geo;
 import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +46,8 @@ class _AddHomeState extends State<AddHome>{
             hintText: "Search", hintStyle: TextStyle(color: Colors.white, fontFamily: "Poppins", fontSize: 18.0),
   ),
   );
+
+  Geoflutterfire geo = new Geoflutterfire();
 
   GoogleMapController mapController;
 
@@ -107,14 +109,14 @@ class _AddHomeState extends State<AddHome>{
                 width: double.infinity,
                 child: RaisedButton(child: Text("Get My Location Address"),
                     onPressed: () async {if(_userLocation != null){
-                      getSetAddress(Coordinates(_userLocation.latitude,_userLocation.longitude));}
+                      getSetAddress(Geo.Coordinates(_userLocation.latitude,_userLocation.longitude));}
                     }),
               ),
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(child: Text("Get Marker Address"),
                     onPressed: () async {if(_markerLocation != null){
-                      getSetAddress(Coordinates(_markerLocation.latitude,_markerLocation.longitude));}
+                      getSetAddress(Geo.Coordinates(_markerLocation.latitude,_markerLocation.longitude));}
                     }),
               ),
               SizedBox(
@@ -159,8 +161,8 @@ class _AddHomeState extends State<AddHome>{
     return result;
   }
 
-  getSetAddress(Coordinates coordinates) async {
-    final addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+  getSetAddress(Geo.Coordinates coordinates) async {
+    final addresses = await Geo.Geocoder.local.findAddressesFromCoordinates(coordinates);
     setState(() {
       _resultAddress = addresses.first.addressLine;
     });
@@ -178,15 +180,28 @@ class _AddHomeState extends State<AddHome>{
       });
   }
 
-  Future _addGeopoint() async{
+  Future<DocumentReference> _addGeopoint() async{
     final user = Provider.of<User>(context);
+    var pos = await location.getLocation();
     //FirebaseUser user;
+    GeoFirePoint point = geo.point(latitude: pos.latitude, longitude: pos.longitude);
     DocumentReference documentReference = Firestore.instance.collection('locations').document();
-    documentReference.setData({
+    /*documentReference.setData({
       "id" : user.uid,
       "docID" : documentReference.documentID,
-      "resultAddress" : _resultAddress,
-      "LatLng" : new GeoPoint(_markerLocation.latitude, _markerLocation.longitude)
+      "resultAddress" : _resultAddress ?? '',
+      "LatLng" : new GeoPoint(_markerLocation.latitude, _markerLocation.longitude),
+      "Position" : point.data
+    }).whenComplete((){
+      Navigator.of(context).pop();
+    });*/
+
+    return Firestore.instance.collection('locations').add({
+      "id" : user.uid,
+      "docID" : documentReference.documentID,
+      "resultAddress" : _resultAddress ?? '',
+      "LatLng" : new GeoPoint(_markerLocation.latitude, _markerLocation.longitude),
+      "position" : point.data
     }).whenComplete((){
       Navigator.of(context).pop();
     });

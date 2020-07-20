@@ -82,37 +82,13 @@ class _TutorProfileState extends State<TutorProfile>{
                   child: Column(
                       children: <Widget>[
                         //Visibility(visible: document,),
+
                         Stack(
                             children: <Widget>[
                               Container(
                                 width: double.infinity,
                                 height: 230.0,
                                 color: Colors.red,
-                                /*child: FutureBuilder(
-                                  //stream: DatabaseService(uid: user.uid).locationData,
-                                  future: Firestore.instance.collection('locations').where('id', isEqualTo: widget.docID).getDocuments(),
-                                  builder: (context,snapshot){
-                                    if(snapshot.hasData){
-                                      //String resultAddress = '';
-                                      /*int i;
-                                      for( i=0; i<snapshot.data.length; i++) {
-                                        resultAddress = docs.documents[i].data['resultAddress'];
-                                      }*/
-                                      return Text(snapshot.data['resultAddress']);
-                                    }
-                                    else{return Container(height:20.0,color: Colors.black);}
-                                  },
-
-                                  /*builder: (context,snapshot){
-                                    if(snapshot.hasData) {
-                                      UserLocation locationData = snapshot.data;
-                                      return Text(locationData.address);
-                                    }
-                                    else{
-                                      return Container(width: 20.0,height: 20.0);
-                                    }
-                                  },*/
-                                ),*/
                               ),
                               Container(
 
@@ -191,96 +167,106 @@ class _TutorProfileState extends State<TutorProfile>{
                                                 //Text(getAddress(uid, docID))
                                               ]),
                                         ),
-                                      ))])),
+                                      ))
+                                ])),
                         Divider(color: Colors.black),
-                        //getAddress()
-                        /*Container(
-                            padding: EdgeInsets.only(top: 15.0, left: 25.0),
-                            alignment: Alignment.centerLeft,
-                            child: Text("Preferences", style: TextStyle(fontSize: 22.0, fontFamily: "Poppins"),)),
-                        InkWell(
+                          Container(
+                          color: Colors.white,
                             child: Column(
-                                children: <Widget>[
-                                  Container(
-                                      margin: EdgeInsets.only(top: 16.0),
-                                      //alignment: Alignment.centerLeft,
-                                      height: 45.0,
-                                      //width: double.infinity,
-                                      child:Material(
-                                        color: Colors.transparent,
-                                        child: FlatButton(
-                                          color: Color.fromARGB(0, 0, 0, 0),
-                                          onPressed: () async {
-                                            /*if (_formKey.currentState.validate()){
-                                setState(() => loading = true);
-                                dynamic result = await _auth.signInWithEmailandPassword(email, password);
-                                if (result == null){
-                                  setState(() {
-                                    error = 'please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }*/},
-                                          child: Row(
-                                              children: <Widget>[
-                                                SizedBox(width: 5.0),
-                                                Icon(Icons.looks_one),
-                                                SizedBox(width: 20.0),
-                                                Text(
-                                                    "Course",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontFamily: "Poppins",
-                                                        fontSize: 18.0,
-                                                        letterSpacing: 1.0
-                                                    )),
+                              children: <Widget>[
+                                StreamBuilder(
+                                  //stream: DatabaseService(uid: user.uid).locationData,
+                                    stream: Firestore.instance.collection('locations').where('id', isEqualTo: user.uid).snapshots(),
+                                    builder: (context, snapshot){
+                                      if(!snapshot.hasData){
+                                        return Wrapper();
+                                      }
+                                      final List<DocumentSnapshot> document = snapshot.data.documents;
+                                      return ListView.builder(
+                                          physics: ScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: document.length,
+                                          itemBuilder:(context, index){
+                                            /*return Column(children: <Widget>[
+                                          Text(document[index].data['docID']),
+                                          Text(document[index].data['resultAddress']),
 
-                                              ]),
-                                        ),
-                                      )
-                                  ),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 16.0),
-                                      //alignment: Alignment.centerLeft,
-                                      height: 45.0,
-                                      //width: double.infinity,
-                                      child:Material(
-                                        color: Colors.transparent,
-                                        child: FlatButton(
-                                          color: Color.fromARGB(0, 0, 0, 0),
-                                          onPressed: () async {
-                                            /*if (_formKey.currentState.validate()){
-                                setState(() => loading = true);
-                                dynamic result = await _auth.signInWithEmailandPassword(email, password);
-                                if (result == null){
-                                  setState(() {
-                                    error = 'please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }*/},
-                                          child: Row(
+                                        ],);*/
+                                            return Column(
                                               children: <Widget>[
-                                                SizedBox(width: 5.0),
-                                                Icon(Icons.looks_two),
-                                                SizedBox(width: 20.0),
-                                                Text(
-                                                    "Learning Method",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontFamily: "Poppins",
-                                                        fontSize: 18.0,
-                                                        letterSpacing: 1.0
-                                                    )),
+                                                Container(
+                                                  padding: EdgeInsets.only(left: 20.0),
+                                                  alignment: Alignment.centerLeft,
+                                                  child: Text(
+                                                      "Address",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily: "Poppins",
+                                                          fontSize: 20.0,
+                                                          letterSpacing: 1.0
+                                                      )),
+                                                ),
+                                                Card(
+                                                  child: ListTile(
+                                                    title: Text(document[index].data['resultAddress']),
+                                                    trailing: FlatButton(
+                                                      child: Icon(Icons.delete),
+                                            onPressed: () {
+                                              /*Firestore.instance.collection(
+                                                  'locations').where('id', isEqualTo: user.uid).getDocuments().then((snapshot){
+                                                  for (int i = 0; i < snapshot.documents.length; i++){
+                                                    snapshot.documents[i].reference.delete();
+                                                  }
+                                                });*/
+                                              Firestore.instance.collection(
+                                                  'locations').where('id', isEqualTo: user.uid).getDocuments().then((snapshot){
 
-                                              ]),
-                                        ),
-                                      )
-                                  )
-                                ]
+                                                  snapshot.documents.elementAt(index).reference.delete();
+
+                                              });
+                                            }),
+                                            ),
+                                            )
+                                              ],
+                                            );
+                                          }
+                                      );
+                                    }
+                                )
+                              ],
                             )
-                        ),
-                        Divider(color: Colors.black)*/
+                          )
+                          /*child: Container(
+                            color: Colors.blueAccent,
+                            child: StreamBuilder(
+                              //stream: DatabaseService(uid: user.uid).locationData,
+                                stream: Firestore.instance.collection('locations').where('id', isEqualTo: user.uid).snapshots(),
+                                builder: (context, snapshot){
+                                  if(!snapshot.hasData){
+                                    return Wrapper();
+                                  }
+                                  final List<DocumentSnapshot> document = snapshot.data.documents;
+                                  return ListView.builder(
+                                    physics: ScrollPhysics(),
+                                    shrinkWrap: true,
+                                      itemCount: document.length,
+                                      itemBuilder:(context, index){
+                                        /*return Column(children: <Widget>[
+                                          Text(document[index].data['docID']),
+                                          Text(document[index].data['resultAddress']),
+
+                                        ],);*/
+                                        return Card(
+                                          child: ListTile(
+                                            title: Text(document[index].data['resultAddress']),
+                                          ),
+                                        );
+                                      }
+                                  );
+                                }
+                            ),
+                          ),*/
+
                       ]),
                 ));
           }

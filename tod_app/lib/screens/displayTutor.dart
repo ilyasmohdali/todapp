@@ -579,7 +579,8 @@ class DisplayTutor extends StatefulWidget{
   showAllTutorVAK(){
     final user = Provider.of<User>(context);
     return StreamBuilder(
-        stream: Firestore.instance.collection('users').where('tutorTeach1', isEqualTo: 'Visual').where('tutorTeach2', isEqualTo: 'Auditory').where('tutorTeach3', isEqualTo: 'Kinesthetic').snapshots(),
+        stream: Firestore.instance.collection('users').where('tutorTeach1', isEqualTo: 'Visual')
+            .where('tutorTeach2', isEqualTo: 'Auditory').where('tutorTeach3', isEqualTo: 'Kinesthetic').snapshots(),
         builder: (context,
             AsyncSnapshot <QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
