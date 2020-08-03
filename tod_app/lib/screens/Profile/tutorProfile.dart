@@ -170,6 +170,40 @@ class _TutorProfileState extends State<TutorProfile>{
                                       ))
                                 ])),
                         Divider(color: Colors.black),
+                        Container(
+                          margin: EdgeInsets.only(left:20.0),
+                          alignment: Alignment.centerLeft,
+                          child: Text("Current Teaching Method", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0),),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 20.0, top: 10.0),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text("1",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                                  Text("   "),
+                                  Text(userData.tutorTeach1, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text("2",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                                  Text("  "),
+                                  Text(userData.tutorTeach2, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text("3",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                                  Text("  "),
+                                  Text(userData.tutorTeach3, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(color: Colors.black),
                           Container(
                           color: Colors.white,
                             child: Column(

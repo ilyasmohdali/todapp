@@ -184,7 +184,7 @@ class _AddHomeState extends State<AddHome>{
     final user = Provider.of<User>(context);
     var pos = await location.getLocation();
     //FirebaseUser user;
-    GeoFirePoint point = geo.point(latitude: pos.latitude, longitude: pos.longitude);
+    GeoFirePoint point = geo.point(latitude: _markerLocation.latitude, longitude: _markerLocation.longitude);
     DocumentReference documentReference = Firestore.instance.collection('locations').document();
     /*documentReference.setData({
       "id" : user.uid,

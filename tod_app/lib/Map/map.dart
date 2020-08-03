@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:math';
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_directions_api/google_directions_api.dart';
@@ -19,6 +18,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:tod_app/screens/home/StudentHome.dart';
 import 'package:tod_app/Widgets/loading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class FireMap extends StatefulWidget {
@@ -37,12 +37,26 @@ class _FireMapState extends State<FireMap> {
   Set<Circle> circles = HashSet<Circle>();
   //RangeValues values = RangeValues(100,1000);
   final _formkey = GlobalKey<FormState>();
-  Geoflutterfire geo = Geoflutterfire();
+  Geoflutterfire geo;
   //List<Marker> allMarkers = [];
 
-  /*setMarker(){
-    return allMarkers;
+  /*static Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
   }*/
+
+  static Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=l&query=$latitude,$longitude';
+    if(await canLaunch(googleUrl)){
+      await launch(googleUrl);
+    }else{
+      throw 'map could not be opened';
+    }
+  }
 
 
   //double value;
@@ -50,16 +64,16 @@ class _FireMapState extends State<FireMap> {
   int radii = 100;
   //static BehaviorSubject seedValue;
 
-  BehaviorSubject<double> radius = BehaviorSubject<double>.seeded(1000.0);
+  BehaviorSubject<double> radius = BehaviorSubject<double>.seeded(1.0);
 
+  Stream<List<DocumentSnapshot>> stream;
   //ValueConnectableStream<double> radius = new ValueConnectableStream<double>(stream);
   Stream<dynamic> query;
 
   StreamSubscription subscription;
-  List<DocumentSnapshot> documentList;
+  //List<DocumentSnapshot> documentList;
 
   Position _position;
-
 
   Position currentLocation;
   var tutors =[];
@@ -67,6 +81,7 @@ class _FireMapState extends State<FireMap> {
   //Set<Marker> _marker = HashSet<Marker>();
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<CircleId, Circle> circle = <CircleId, Circle>{};
 
 
   _getCurrentLocation() async{
@@ -84,18 +99,26 @@ class _FireMapState extends State<FireMap> {
   Future<LocationData> _getUserLocation;
   Location location = new Location();
 
+  //LatLng initialPosition = LatLng(3.0697,101.5037);
   LatLng initialPosition = LatLng(2.2262,102.4547);
   double value;
 
+  //List<DocumentSnapshot> documentList;
   //var data, distance, docID;
   @override
   void initState(){
     super.initState();
-    //_setCircles(mapController);
+    _setCircles(mapController);
     //_onMapCreated(mapController);
     _getCurrentLocation();
     //filterMarkers(dist);
 
+    geo = Geoflutterfire();
+    GeoFirePoint center = geo.point(latitude: initialPosition.latitude, longitude: initialPosition.longitude);
+    stream = radius.switchMap((rad){
+      var collectionReference = firestore.collection('locations');
+      return geo.collection(collectionRef: collectionReference).within(center: center, radius: rad, field: 'position', strictMode: true);
+    });
 
     //getDist();
     //placeFilteredMarker(data, distance, docID);
@@ -106,7 +129,7 @@ class _FireMapState extends State<FireMap> {
       setState(() {
         currentLocation = currLoc;
         mapToggle = true;
-        setMarkers();
+        //setMarkers();
       });
     });
 
@@ -116,8 +139,9 @@ class _FireMapState extends State<FireMap> {
   @override
   Widget build(BuildContext context) {
 //setMarkers();
+
     //setState(() {
-      _setCircles(mapController);
+      //_setCircles(mapController);
       //filterMarkers(dist);
       //setMarkers();
       //_onMapCreated(mapController);
@@ -136,6 +160,7 @@ class _FireMapState extends State<FireMap> {
             zoomControlsEnabled: false,
             mapType: MapType.normal,
             circles: circles,
+            //circles: Set<Circle>.of(circle.values),
             markers: Set<Marker>.of(markers.values),
             myLocationEnabled: true,
           ),
@@ -217,13 +242,15 @@ class _FireMapState extends State<FireMap> {
             ),
           ),
         )*/
+         
+          
           Positioned(
-            bottom: 20.0,
+            bottom: 18.0,
             left: 20.0,
-            right: 20.0,
+            //right: 20.0,
             child: Container(
-              height: 50.0,
-              width: 250.0,
+              height: 42.0,
+              width: 280.0,
               child: RaisedButton(
                 color: Colors.blue,
                 child: Text("Set Radius", style: TextStyle(color: Colors.white),),
@@ -244,16 +271,12 @@ class _FireMapState extends State<FireMap> {
 
 
   void _onMapCreated(GoogleMapController controller) {
-    _startQuery();
+    //_startQuery();
     setState(() {
-      /*_location.onLocationChanged.listen((l) {
-        controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-            target: LatLng(l.latitude, l.longitude),
-            zoom: 14.7
-        )
-        ));
-      });*/
       mapController = controller;
+      stream.listen((List<DocumentSnapshot> documentList){
+        _updateMarker(documentList);
+      });
     });
   }
   /*void _onMapCreated(GoogleMapController controller){
@@ -301,7 +324,7 @@ class _FireMapState extends State<FireMap> {
         circleId: CircleId("circle"),
         //center: _createCenter(),
         center: LatLng(currentLocation.latitude,currentLocation.longitude),
-        radius: radius.value,
+        radius: radius.value*1000,
         //radius: radius3,
         fillColor: Colors.blueAccent.withOpacity(0.1),
         strokeWidth: 1,
@@ -328,32 +351,34 @@ class _FireMapState extends State<FireMap> {
                       borderRadius: BorderRadius.circular(10.0),
                       color: Colors.white
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Set Radius (Meter)',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 22.0, top: 16.0),
-                      /*suffixIcon: IconButton(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Set Radius (KM)',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 22.0, top: 16.0),
+                        /*suffixIcon: IconButton(
                           icon: Icon(Icons.search),
                           onPressed: searchAndNavigate,
                         )*/),
-                    /*onChanged: (val) {
+                      /*onChanged: (val) {
                     setState(() {
                       filterDist = val;
                     });
                   },*/
-                  ),
+                    ),
+
                 ),
 
                 Slider(
-                      value: radius.value,
-                      min: 1000,
-                      max: 10000,
+                      value: _value,
+                      min: 1,
+                      max: 10,
                       divisions: 9,
-                      label: radius.value.toString(),
-                      onChanged: _updateQuery
+                      label: _label,
+                      //onChanged: _updateQuery
+                  onChanged: (double value) => changed(value),
                     ),
-                    Text("Radius: " + radius.value.toString()),
+                    Text("Radius: " + radius.value.toString() + "km"),
                 /*Slider(
                   value: (radii ?? 100.0).toDouble(),
                   onChanged: (val){setState(()=> radii = val.round());},
@@ -367,7 +392,7 @@ class _FireMapState extends State<FireMap> {
                 RaisedButton(
                       color: Colors.blue,
                       onPressed: (){
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                       child: Text("Confirm", style: TextStyle(color: Colors.white)),
                     )
@@ -378,204 +403,212 @@ class _FireMapState extends State<FireMap> {
   }
   Firestore firestore = Firestore.instance;
 
-  setMarkers(){
-    tutors = [];
-    firestore.collection('locations').getDocuments().then((docs){
-      if(docs.documents.isNotEmpty){
-        setState(() {
-          tutorsToggle = true;
-        });
-        for(int i = 0; i<docs.documents.length; i++){
-          tutors.add(docs.documents[i].data);
-          initMarker(docs.documents[i].data, docs.documents[i].documentID);
-        }
-      }
-    });
-  }
 
-  void initMarker(data,docID){
-    //final user = Provider.of<User>(context);
-    var markerIdVal = docID;
-    final MarkerId markerId = MarkerId(markerIdVal);
 
-    final Marker marker = Marker(
-      markerId: markerId,
-      position: LatLng(data['LatLng'].latitude, data['LatLng'].longitude),
-      infoWindow: InfoWindow(title: data['resultAddress']),
-      onTap: (){
-        showModalBottomSheet(
-            shape: RoundedRectangleBorder(
-            borderRadius: new BorderRadius.only(
-            topLeft: const Radius.circular(10.0),
-          topRight: const Radius.circular(10.0)
-        )
-        ),
-            context: context,
-            builder: (builder){
-              return StreamBuilder(
-                stream: firestore.collection('locations').document(docID).snapshots(),
-                builder: (context, snapshot){
-                  if(!snapshot.hasData){
-                    return Wrapper();
-                  }
-                  return new Container(
-                    height: 270.0,
-                    child: new Container(
-                      padding: EdgeInsets.fromLTRB(20.0, 3, 30.0, 5.0),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            child: StreamBuilder(
-                              stream: firestore.collection('users').where('uid', isEqualTo: snapshot.data['id']).snapshots(),
-                              builder: (context,snapshot){
-                                if (!snapshot.hasData){
-                                  return Wrapper();
-                                }
-                                final List<DocumentSnapshot> document = snapshot.data.documents;
-                                return ListView.builder(
-                                    physics: ScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: document.length,
-                                    itemBuilder:(context, index){
-                                      /*return Card(
+  void _addMarker(lat, lng, data, docID, distance){
+    MarkerId id = MarkerId(docID);
+    //CircleId circleId = CircleId(docID);
+    Marker marker = Marker(
+      markerId: id,
+      position: LatLng(lat,lng),
+      infoWindow: InfoWindow(title: data['resultAddress'], snippet: '$distance' + ' km away'),
+        onTap: (){
+          showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.only(
+                      topLeft: const Radius.circular(10.0),
+                      topRight: const Radius.circular(10.0)
+                  )
+              ),
+              context: context,
+              builder: (builder){
+                return StreamBuilder(
+                  stream: firestore.collection('locations').document(docID).snapshots(),
+                  builder: (context, snapshot){
+                    if(!snapshot.hasData){
+                      return Wrapper();
+                    }
+                    return new Container(
+                      height: 310.0,
+                      child: new Container(
+                        padding: EdgeInsets.fromLTRB(20.0, 3, 30.0, 5.0),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              child: StreamBuilder(
+                                stream: firestore.collection('users').where('uid', isEqualTo: snapshot.data['id']).snapshots(),
+                                builder: (context,snapshot){
+                                  if (!snapshot.hasData){
+                                    return Wrapper();
+                                  }
+                                  final List<DocumentSnapshot> document = snapshot.data.documents;
+                                  return ListView.builder(
+                                      physics: ScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: document.length,
+                                      itemBuilder:(context, index){
+                                        /*return Card(
                                         child: ListTile(
                                           title: Text(document[index].data['userName']),
                                         ),
                                       );*/
-                                      return Column(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 10.0, top: 15.0),
-                                            alignment: Alignment.centerLeft,
-                                            child: Text("Tutor Details", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0)),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Container(
-                                                alignment: Alignment.centerLeft,
-                                                margin: EdgeInsets.only(bottom: 10.0, left: 15.0),
-                                                width: 75.0,
-                                                height: 75.0,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.grey,
-                                                  image: DecorationImage(
-                                                    //image: AssetImage('assets/images/tod_logo.PNG')
-                                                      image: NetworkImage(document[index].data['imageURL'])
-                                                    //image: NetworkImage(userNotifier.userList)
+                                        return Column(
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.only(bottom: 10.0, top: 15.0),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text("Tutor Details", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0)),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Container(
+                                                  alignment: Alignment.centerLeft,
+                                                  margin: EdgeInsets.only(bottom: 10.0, left: 15.0),
+                                                  width: 75.0,
+                                                  height: 75.0,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.grey,
+                                                    image: DecorationImage(
+                                                      //image: AssetImage('assets/images/tod_logo.PNG')
+                                                        image: NetworkImage(document[index].data['imageURL'])
+                                                      //image: NetworkImage(userNotifier.userList)
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Container(
-                                                alignment: Alignment.centerLeft,
-                                                width: 200.0,
-                                                height: 90.0,
-                                                margin: EdgeInsets.only(left: 20.0),
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    Container(
-                                                      alignment: Alignment.centerLeft,
-                                                      child: Text(document[index].data['email'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
-                                                    ),
-                                                    SizedBox(height: 5.0,),
-                                                    Container(
-                                                      alignment: Alignment.centerLeft,
-                                                      child: Text(document[index].data['phoneNum'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
-                                                    ),
-                                                    SizedBox(height: 5.0,),
-                                                    Container(
-                                                      alignment: Alignment.centerLeft,
-                                                      child: Text(document[index].data['gender'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
-                                                    ),
-                                                  ],
+                                                Container(
+                                                  alignment: Alignment.centerLeft,
+                                                  width: 200.0,
+                                                  //height: 140.0,
+                                                  margin: EdgeInsets.only(left: 20.0),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Container(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(document[index].data['email'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
+                                                      ),
+                                                      SizedBox(height: 5.0,),
+                                                      Container(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(document[index].data['phoneNum'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
+                                                      ),
+                                                      SizedBox(height: 5.0,),
+                                                      Container(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(document[index].data['gender'], style: TextStyle(fontFamily: "Poppins", fontSize: 16.0),),
+                                                      ),
+                                                      SizedBox(height: 5.0,),
+                                                      Container(
+                                                        //padding: EdgeInsets.only(top: 13, bottom: 5, left: 23, right: 28),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: <Widget>[
+                                                            Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: <Widget>[
+                                                                Text('Call', style: TextStyle(fontSize: 16, fontFamily: "Poppins")),
+                                                                SizedBox(height: 1),
+                                                                Text(document[index].data['phoneNum'], style: TextStyle(fontSize: 13)),
+                                                              ],
+                                                            ),
+                                                            RaisedButton(
+                                                                onPressed: (){
+                                                                  print('object');
+                                                                  launch('tel://${document[index].data['phoneNum']}');
+                                                                },
+                                                                child: Icon(Icons.phone_in_talk, size: 20, color: Colors.black87.withOpacity(0.7))),
+                                                          ],
+                                                        ) ,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      );
-                                    }
-                                );
-                              },
+                                              ],
+                                            )
+                                          ],
+                                        );
+                                      }
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            margin: EdgeInsets.only(bottom: 5.0),
-                            child: Text("Address", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0)),
-                          ),
-                          Container(
-                            child: Text(snapshot.data['resultAddress'], style: TextStyle(fontSize: 14.0, fontFamily: "Poppins"),),
-                          ),
-                        ],
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              margin: EdgeInsets.only(bottom: 5.0),
+                              child: Text("Address", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0)),
+                            ),
+                            Container(
+                              child: Text(snapshot.data['resultAddress'], style: TextStyle(fontSize: 14.0, fontFamily: "Poppins"),),
+                            ),
+                            //distanceGet(docID, distance)
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            }
-        );}
+                    );
+                  },
+                );
+              }
+          );}
     );
-
     setState(() {
-      markers[markerId] = marker;
+      markers[id]= marker;
+
     });
   }
+  
+  distanceGet(docID,distance){
+    return StreamBuilder(
+      stream: firestore.collection('locations').document(docID).snapshots(),
+            builder: (context, snapshot){
+          if(!snapshot.hasData){
+            return Wrapper();
+          }
+          return Text('$distance');
+      }
+    );
+  }
 
+   _getDistance(List<DocumentSnapshot> documentList){
+      documentList.forEach((DocumentSnapshot document){
+      GeoPoint point = document.data['position']['geopoint'];
+      //double distance = document.data['distance'];
+      Geolocator().distanceBetween(initialPosition.latitude, initialPosition.longitude, document.data['LatLng'].latitude,
+          document.data['LatLng'].longitude).then((calcDist){
+        double distance = calcDist/1000;
+        distanceGet(document.documentID,distance.toStringAsFixed(1));
+      });
+    });
+  }
+        
 
-  void _updateMarkers(List<DocumentSnapshot> documentList){
-    String docID;
-    var  markerIdVal = docID;
-    final MarkerId markerId = MarkerId(markerIdVal);
-    print('hello');
-    print(documentList);
-    markers.clear();
+  void _updateMarker(List<DocumentSnapshot> documentList){
     documentList.forEach((DocumentSnapshot document){
-      GeoPoint pos = document.data["position"]['geopoint'];
-      double distance = document.data['distance'];
-      final Marker marker = Marker(
-        markerId: markerId,
-        position: LatLng(pos.latitude,pos.longitude),
-        //icon: BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(title: 'tutor location', snippet: '$distance kilometres from you'),
-        //onTap: (){showModalBottomSheet(context: null, builder: null);}
-      );
-      /*setState(() {
-        markers[markerId] = marker;
-      });*/
+      GeoPoint point = document.data['position']['geopoint'];
+      //double distance = document.data['distance'];
+      Geolocator().distanceBetween(initialPosition.latitude, initialPosition.longitude, document.data['LatLng'].latitude,
+          document.data['LatLng'].longitude).then((calcDist){
+        double distance = calcDist/1000;
+        _addMarker(point.latitude, point.longitude, document.data,document.documentID, distance.toStringAsFixed(1));
+      });
+
     });
   }
+  double _value = 1.0;
+  String _label = '';
 
-
-  _startQuery() async {
-     var pos = await _location.getLocation();
-     var ref = Firestore.instance.collection('locations');
-     GeoFirePoint center = geo.point(latitude: pos.latitude, longitude: pos.longitude);
-
-     print(LatLng(center.latitude,center.longitude));
-     subscription = radius.switchMap((rad){
-       return geo.collection(collectionRef: ref).within(
-           center: center,
-           radius: rad,
-           field: "position",
-          strictMode: true
-       );
-     }).listen(_updateMarkers);
-  }
-
-  _updateQuery(value) {
+  changed(value){
 
     final zoomMap = {
-      1000.0: 14.75,
-      2000.0: 14.25,
-      3000.0: 13.75,
-      4000.0: 13.25,
-      5000.0: 12.75,
-      6000.0: 12.25,
-      7000.0: 11.75,
-      8000.0: 11.25,
-      9000.0: 10.75,
-      10000.0: 10.25,
+      1.0: 14.5,
+      2.0: 13.7,
+      3.0: 13.2,
+      4.0: 12.7,
+      5.0: 12.2,
+      6.0: 12.0,
+      7.0: 11.8,
+      8.0: 11.6,
+      9.0: 11.4,
+      10.0: 11.2,
     };
 
     final zoom = zoomMap[value];
@@ -583,92 +616,21 @@ class _FireMapState extends State<FireMap> {
 
 
     setState(() {
-      //radius.add(value);
-      radius.value = value;
+      _value = value;
+      _label = '${_value.toInt().toString()} km';
+      markers.clear();
+      circles.clear();
     });
+    _setCircles(mapController);
+    radius.add(value);
   }
-
-  filterMarkers(dist){
-    markers.clear();
-    //firestore.collection('locations').getDocuments().then((docs){
-      //if(docs.documents.isNotEmpty){
-        for(int i = 0; i<tutors.length; i++){
-          Geolocator().distanceBetween(initialPosition.latitude, initialPosition.longitude, tutors[i]['LatLng'].latitude,
-              tutors[i]['LatLng'].longitude).then((calcDist){
-                print(calcDist/1000);
-                if(calcDist/1000 < dist)
-                  {
-                    placeFilteredMarker(tutors[i], tutors[i]['docID'], calcDist/1000);
-                  }
-          });
-            //placeFilteredMarker(docs.documents[i].data, docs.documents[i].documentID, docs.documents[i].data['LatLng']);
-        //}
-     // }
-    }
-  }
-
-  placeFilteredMarker(data, docID, distance){
-
-    var markerIdVal = docID;
-    final MarkerId markerId = MarkerId(markerIdVal);
-    final Marker marker = Marker(
-        markerId: markerId,
-        position: LatLng(data['LatLng'].latitude, data['LatLng'].longitude),
-        infoWindow: InfoWindow(title: data['resultAddress'])
-    );
-
-    setState(() {
-      markers[markerId] = marker;
-    });
-  }
-
-
-  Future<bool> getDist(){
-    return showDialog(context: context,
-      barrierDismissible: true,
-      builder: (context){
-        return AlertDialog(
-          title: Text('Enter Distance(metres'),
-          contentPadding: EdgeInsets.all(10.0),
-          content: TextField(
-            decoration: InputDecoration(hintText: 'distance in metres'),
-            onChanged: (val){
-
-              setState(() {
-                filterDist = val;
-              });
-
-            },
-          ),
-          actions: <Widget>[
-            FlatButton(
-                color: Colors.transparent,
-                textColor: Colors.black,
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-                child: Text('CANCEL',style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
-            FlatButton(
-              child: Text('OK'),
-              color: Colors.transparent,
-              textColor: Colors.black,
-              onPressed: (){
-                filterMarkers(filterDist);
-                Navigator.of((context)).pop();
-        })
-          ],
-        );
-      }
-    );
-  }
-
 
 
 
   @override
   void dispose() {
     // TODO: implement dispose
-    subscription.cancel();
+    radius.close();
     super.dispose();
   }
 

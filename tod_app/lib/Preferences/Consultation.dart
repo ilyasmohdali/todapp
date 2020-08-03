@@ -161,7 +161,7 @@ class _ConsultationState extends State<Consultation> {
                       color: Colors.white,
                     ),
                     elevation: 0.0,
-                    title: Text('Consultation',
+                    title: Text('Learning Method',
                         style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 22.0,
@@ -219,6 +219,7 @@ class _ConsultationState extends State<Consultation> {
                                     hint: Text('Preference 1', style: TextStyle(fontFamily: 'Poppins', fontSize: 12.0)),
                                     validator: (value) => value==null ? 'Preference 1' : null,
                                     value: _selectedUPreference1,
+                                    //value: uPreference1[0],
                                     onChanged: (newValue) {
                                       setState(() {
                                         _selectedUPreference1 = newValue;

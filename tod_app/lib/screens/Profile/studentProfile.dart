@@ -100,137 +100,39 @@ class _StudentProfileState extends State<StudentProfile>{
                     ),
                     ]
                 ),
-                /*Container(
-                  padding: EdgeInsets.only(top: 15.0, left: 25.0),
+                Container(
+                  margin: EdgeInsets.only(left: 20.0, top: 10.0),
                   alignment: Alignment.centerLeft,
-                  child: Text("Location", style: TextStyle(fontSize: 22.0, fontFamily: "Poppins"),)),
-                  InkWell(
+                  child: Text("Current Learning Method", style: TextStyle(fontFamily: "Poppins", fontSize: 20.0),),
+                ),
+                  Container(
+                    margin: EdgeInsets.only(left: 20.0, top: 10.0),
                     child: Column(
                       children: <Widget>[
-                        Container(
-                            margin: EdgeInsets.only(top: 16.0),
-                            //alignment: Alignment.centerLeft,
-                            height: 45.0,
-                            //width: double.infinity,
-                            child:Material(
-                              color: Colors.transparent,
-                              child: FlatButton(
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                onPressed: () async {
-                                    /*if (_formKey.currentState.validate()){
-                                setState(() => loading = true);
-                                dynamic result = await _auth.signInWithEmailandPassword(email, password);
-                                if (result == null){
-                                  setState(() {
-                                    error = 'please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }*/},
-                                child: Row(
-                                    children: <Widget>[
-                                      SizedBox(width: 5.0),
-                                      Icon(Icons.home),
-                                      SizedBox(width: 20.0),
-                                      Text(
-                                        "Add Home",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "Poppins",
-                                              fontSize: 18.0,
-                                              letterSpacing: 1.0
-                                      )),
-                                ]),
-                              ),
-                            ))])),
-                Divider(color: Colors.black),
-                  Container(
-                      padding: EdgeInsets.only(top: 15.0, left: 25.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text("Preferences", style: TextStyle(fontSize: 22.0, fontFamily: "Poppins"),)),
-                  InkWell(
-                      child: Column(
+                        Row(
                           children: <Widget>[
-                            Container(
-                                margin: EdgeInsets.only(top: 16.0),
-                                //alignment: Alignment.centerLeft,
-                                height: 45.0,
-                                //width: double.infinity,
-                                child:Material(
-                                  color: Colors.transparent,
-                                  child: FlatButton(
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                    onPressed: () async {
-                                      /*if (_formKey.currentState.validate()){
-                                setState(() => loading = true);
-                                dynamic result = await _auth.signInWithEmailandPassword(email, password);
-                                if (result == null){
-                                  setState(() {
-                                    error = 'please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }*/},
-                                    child: Row(
-                                        children: <Widget>[
-                                          SizedBox(width: 5.0),
-                                          Icon(Icons.looks_one),
-                                          SizedBox(width: 20.0),
-                                          Text(
-                                              "Course",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: "Poppins",
-                                                  fontSize: 18.0,
-                                                  letterSpacing: 1.0
-                                              )),
-
-                                        ]),
-                                  ),
-                                )
-                            ),
-                            Container(
-                                margin: EdgeInsets.only(top: 16.0),
-                                //alignment: Alignment.centerLeft,
-                                height: 45.0,
-                                //width: double.infinity,
-                                child:Material(
-                                  color: Colors.transparent,
-                                  child: FlatButton(
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                    onPressed: () async {
-                                      /*if (_formKey.currentState.validate()){
-                                setState(() => loading = true);
-                                dynamic result = await _auth.signInWithEmailandPassword(email, password);
-                                if (result == null){
-                                  setState(() {
-                                    error = 'please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }*/},
-                                    child: Row(
-                                        children: <Widget>[
-                                          SizedBox(width: 5.0),
-                                          Icon(Icons.looks_two),
-                                          SizedBox(width: 20.0),
-                                          Text(
-                                              "Learning Method",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: "Poppins",
-                                                  fontSize: 18.0,
-                                                  letterSpacing: 1.0
-                                              )),
-
-                                        ]),
-                                  ),
-                                )
-                            )
-                          ]
-                      )
-                  ),
-                  Divider(color: Colors.black)*/
+                            Text("1",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                            Text("   "),
+                            Text(userData.userPreference1, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text("2",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                            Text("  "),
+                            Text(userData.userPreference2, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text("3",style: TextStyle(fontSize: 16.0,fontFamily: "Poppins")),
+                            Text("  "),
+                            Text(userData.userPreference3, style: TextStyle(fontSize: 16.0,fontFamily: "Poppins"))
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
                 ]),
               ) );
           }
